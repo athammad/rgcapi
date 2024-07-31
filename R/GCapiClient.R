@@ -4,9 +4,29 @@ library(jsonlite)
 library(lubridate)
 library(data.table)
 
-# lookupTabs.R contains the necessary lookup tables
-source("./GCAPI/lookupTabs.R")
 
+
+pkgload::load_code(path = "./R/lookupTabs.R")
+pkgload::load_code(path = "./R/helpers.R")
+
+
+#' GCapiClient
+#'
+#' This R6 class provides methods to interact with the Gain Capital API V1 for trading on Forex.com.
+#'
+#' @docType class
+#' @format An \code{\link{R6Class}} generator object
+#' @field rest_url The base URL for the Gain Capital API.
+#' @field session_id The session ID for the current session.
+#' @field username The username for the current session.
+#' @field session The CURL handle for the current session.
+#' @field trading_account_id The trading account ID for the current session.
+#' @examples
+#' \dontrun{
+#' gc_client <- GCapiClient$new("your_username", "your_password", "your_appkey")
+#' account_info <- gc_client$get_account_info()
+#' market_info <- gc_client$get_market_info("EUR/USD")
+#' }
 GCapiClient <- R6Class(
   "GCapiClient",
   public = list(
@@ -16,6 +36,12 @@ GCapiClient <- R6Class(
     session = NULL,
     trading_account_id = NULL,
 
+    #' @description
+    #' Initialize the GCapiClient object and create a session.
+    #' @param username The username for the Gain Capital API.
+    #' @param password The password for the Gain Capital API.
+    #' @param appkey The application key for the Gain Capital API.
+    #' @param proxies Optional. A list of proxy settings.
     initialize = function(username, password, appkey, proxies = NULL) {
       self$username <- username
       headers <- c('Content-Type' = 'application/json')
@@ -38,7 +64,6 @@ GCapiClient <- R6Class(
           httpheader = headers,
           postfields = data_json,
           verbose = TRUE,
-          #  curl = curl_handle,
           ssl.verifypeer = TRUE # Enable SSL verification
         )
       )
@@ -63,6 +88,10 @@ GCapiClient <- R6Class(
       self$session_id <- session
     },
 
+    #' @description
+    #' Retrieve account information.
+    #' @param get Optional. Specific information to retrieve.
+    #' @return A list containing account information or a specific value if `get` is provided.
     get_account_info = function(get = NULL) {
       response <- getURL(paste0(self$rest_url, '/UserAccount/ClientAndTradingAccount'), curl = self$session)
       resp <- fromJSON(response)
@@ -79,6 +108,11 @@ GCapiClient <- R6Class(
       }
     },
 
+    #' @description
+    #' Retrieve market information.
+    #' @param market_name The name of the market to retrieve information for.
+    #' @param get Optional. Specific information to retrieve.
+    #' @return A list containing market information or a specific value if `get` is provided.
     get_market_info = function(market_name, get = NULL) {
       response <- getURL(paste0(self$rest_url, '/cfd/markets?marketName=', URLencode(market_name)), curl = self$session)
       resp <- fromJSON(response)
@@ -94,6 +128,14 @@ GCapiClient <- R6Class(
       }
     },
 
+    #' @description
+    #' Retrieve price data for a market.
+    #' @param market_id The market ID to retrieve prices for.
+    #' @param num_ticks The number of price ticks to retrieve.
+    #' @param from_ts The start timestamp in UTC.
+    #' @param to_ts The end timestamp in UTC.
+    #' @param price_type The type of price to retrieve ("MID", "BID", "ASK").
+    #' @return A data.table containing the price data.
     get_prices = function(market_id, num_ticks, from_ts, to_ts, price_type = "MID") {
       endpoint <- paste0('/market/', market_id, '/tickhistorybetween?fromTimeStampUTC=', from_ts, '&toTimeStampUTC=', to_ts, '&maxResults=', num_ticks, '&priceType=',toupper(price_type))
       response <- getURL(paste0(self$rest_url, endpoint), curl = self$session)
@@ -108,6 +150,15 @@ GCapiClient <- R6Class(
       return(data)
     },
 
+    #' @description
+    #' Retrieve OHLC data for a market.
+    #' @param market_id The market ID to retrieve OHLC data for.
+    #' @param num_ticks The number of ticks to retrieve.
+    #' @param interval The interval for OHLC data ("MINUTE", "HOUR", "DAY").
+    #' @param span The span of the interval.
+    #' @param from_ts The start timestamp in UTC.
+    #' @param to_ts The end timestamp in UTC.
+    #' @return A data.table containing the OHLC data.
     get_ohlc = function(market_id = NULL, num_ticks = NULL, interval = "HOUR", span = 1, from_ts, to_ts) {
       endpoint <- paste0('/market/', market_id, '/barhistorybetween?interval=', interval, '&span=', span, '&fromTimeStampUTC=', from_ts, '&toTimeStampUTC=', to_ts, '&maxResults=', num_ticks)
       response <- getURL(paste0(self$rest_url, endpoint), curl = self$session)
@@ -123,11 +174,26 @@ GCapiClient <- R6Class(
       return(data)
     },
 
-    trade_order = function(quantity, offer_price,bid_price, direction, trading_acc_id, market_id, market_name, stop_loss = NULL, take_profit = NULL, trigger_price = NULL, close = FALSE, order_id = NULL, tolerance = NULL) {
+    #' @description
+    #' Place a trade order.
+    #' @param quantity The quantity to trade.
+    #' @param offer_price The offer price for the trade.
+    #' @param bid_price The bid price for the trade.
+    #' @param direction The direction of the trade ("buy" or "sell").
+    #' @param trading_acc_id The trading account ID.
+    #' @param market_id The market ID.
+    #' @param market_name The market name.
+    #' @param stop_loss Optional. The stop loss price.
+    #' @param take_profit Optional. The take profit price.
+    #' @param trigger_price Optional. The trigger price.
+    #' @param close Optional. If TRUE, close the trade.
+    #' @param order_id Optional. The order ID.
+    #' @param tolerance Optional. The price tolerance.
+    #' @return A data.table containing the order details.
+    trade_order = function(quantity, offer_price, bid_price, direction, trading_acc_id, market_id, market_name, stop_loss = NULL, take_profit = NULL, trigger_price = NULL, close = FALSE, order_id = NULL, tolerance = NULL) {
       endpoint <- '/order/newtradeorder'
 
-      # Directly use the provided offer_price for both BidPrice and OfferPrice
-      #bid_price <- offer_price - 0.0002
+      # Adjust bid and offer prices based on tolerance
       bid_price <- bid_price - (tolerance * 0.0001)
       offer_price <- offer_price + (tolerance * 0.0001)
 
@@ -148,7 +214,6 @@ GCapiClient <- R6Class(
         TriggerPrice = trigger_price,
         PositionMethodId = 1,
         isTrade = TRUE
-        #PriceTolerance = tolerance  # I do not think this is even used!!!
       )
 
       if (close) {
@@ -186,22 +251,24 @@ GCapiClient <- R6Class(
       )
 
       resp <- fromJSON(response)
-      #browser()
       status_desc <- get_instruction_status_description(resp$StatusReason)
       reason_desc <- get_instruction_status_reason_description(resp$StatusReason)
       order_status_desc <- get_order_status_reason_descriptions(resp$Orders$StatusReason)
       order_reason_desc <- get_order_status_reason_descriptions(resp$Orders$StatusReason)
-      if(length(resp$Actions!=0)){
-        order_action_type<- get_order_action_type_descriptions(resp$Actions$OrderActionTypeId)
-        print(paste("Action:",order_action_type))
+      if (length(resp$Actions != 0)) {
+        order_action_type <- get_order_action_type_descriptions(resp$Actions$OrderActionTypeId)
+        print(paste("Action:", order_action_type))
       }
-      print(paste("Order ID:",resp$Orders$OrderId,"-",status_desc,"-",reason_desc))
-      print(paste("Order Status:",order_status_desc,"-",order_reason_desc))
-      order_details$OrderId<-resp$Orders$OrderId
+      print(paste("Order ID:", resp$Orders$OrderId, "-", status_desc, "-", reason_desc))
+      print(paste("Order Status:", order_status_desc, "-", order_reason_desc))
+      order_details$OrderId <- resp$Orders$OrderId
       order_details <- as.data.table(order_details)
       return(order_details)
     },
 
+    #' @description
+    #' List open positions.
+    #' @return A data.table containing the open positions.
     list_open_positions = function() {
       endpoint <- '/order/openpositions'
       response <- getURL(paste0(self$rest_url, endpoint), curl = self$session)
@@ -215,7 +282,11 @@ GCapiClient <- R6Class(
       as.data.table(data)
       return(data)
     },
-    list_active_orders =function() {
+
+    #' @description
+    #' List active orders.
+    #' @return A list containing the active orders.
+    list_active_orders = function() {
       endpoint <- '/order/activeorders'
 
       # Create the request body
@@ -238,14 +309,17 @@ GCapiClient <- R6Class(
       return(resp)
     },
 
+    #' @description
+    #' Close all trades.
+    #' @param tolerance The price tolerance.
+    #' @return A list containing the responses for each closed trade.
     close_all_trades = function(tolerance) {
       open_positions <- self$list_open_positions()
 
-      if (length(open_positions) == 0) {#norw
+      if (length(open_positions) == 0) {
         message("No open positions to close")
         return(NULL)
       }
-      #browser()
       close_responses <- list()
       for (i in 1:nrow(open_positions)) {
         position <- open_positions[i,]
@@ -272,9 +346,15 @@ GCapiClient <- R6Class(
 
       return(close_responses)
     },
-    close_all_trades_new = function(open_positions,tolerance) {
-      open_positions<-rbindlist(open_positions)
-      if (length(open_positions) == 0) {#norw
+
+    #' @description
+    #' Close all trades using provided open positions.
+    #' @param open_positions A list of open positions.
+    #' @param tolerance The price tolerance.
+    #' @return A list containing the responses for each closed trade.
+    close_all_trades_new = function(open_positions, tolerance) {
+      open_positions <- rbindlist(open_positions)
+      if (length(open_positions) == 0) {
         message("No open positions to close")
         return(NULL)
       }
@@ -292,7 +372,7 @@ GCapiClient <- R6Class(
         close_resp <- self$trade_order(
           quantity = quantity,
           offer_price = offer_price,
-          bid_price =  bid_price,
+          bid_price = bid_price,
           direction = direction,
           trading_acc_id = position$TradingAccountId,
           market_id = market_id,
@@ -307,45 +387,66 @@ GCapiClient <- R6Class(
       return(close_responses)
     },
 
+    #' @description
+    #' Retrieve trade history.
+    #' @param trading_account_id The trading account ID.
+    #' @param from Optional. The start timestamp for trade history.
+    #' @param max_results The maximum number of results to return.
+    #' @return A data.table containing the trade history.
     get_trade_history = function(trading_account_id = self$trading_account_id, from = NULL, max_results = 100) {
-      # Ensure 'from' is in UNIX datetime format (seconds since epoch)
-
       if (!is.null(from)) {
         from_utc <- as.numeric(as.POSIXct(from, tz = "UTC"))
       }
-      # Build the endpoint URL with query parameters
       endpoint <- paste0(self$rest_url, '/order/tradehistory?TradingAccountId=', trading_account_id, '&maxResults=', max_results)
       if (!is.null(from)) {
         endpoint <- paste0(endpoint, '&from=', round(from_utc))
       }
 
-      # Make the GET request
       response <- getURL(endpoint, curl = self$session)
 
       if (response == "") {
         stop("GCapiException: Received empty response from API")
-      }else{
+      } else {
         resp <- fromJSON(response)
       }
 
       if (is.null(resp$TradeHistory) || length(resp$TradeHistory) == 0) {
         stop("GCapiException: No trade history found for trading account ID - ", trading_account_id)
-      }else{
-
+      } else {
         data <- resp$TradeHistory
         setDT(data)
-        data<-data[,.(OrderId,LastChangedDateTimeUtc,ExecutedDateTimeUtc,MarketName,Direction,OriginalQuantity,Price,RealisedPnl)]
+        data <- data[, .(OrderId, LastChangedDateTimeUtc, ExecutedDateTimeUtc, MarketName, Direction, OriginalQuantity, Price, RealisedPnl)]
         data$LastChangedDateTimeUtc <- as.POSIXct(as.numeric(gsub("\\D", "", data$LastChangedDateTimeUtc)) / 1000, origin = "1970-01-01", tz = "UTC")
         data$ExecutedDateTimeUtc <- as.POSIXct(as.numeric(gsub("\\D", "", data$ExecutedDateTimeUtc)) / 1000, origin = "1970-01-01", tz = "UTC")
-        data$LastChangedDateTimeUtc<-as.POSIXct(data$LastChangedDateTimeUtc,tz = "Asia/Singapore")
-        data$ExecutedDateTimeUtc<-as.POSIXct(data$ExecutedDateTimeUtc,tz = "Asia/Singapore")
+        data$LastChangedDateTimeUtc <- as.POSIXct(data$LastChangedDateTimeUtc, tz = "Asia/Singapore")
+        data$ExecutedDateTimeUtc <- as.POSIXct(data$ExecutedDateTimeUtc, tz = "Asia/Singapore")
         return(data)
       }
+    },
+
+    #' @description
+    #' Retrieve long series data by bypassing the API limitation of max 4000 data points.
+    #' @param market_id The market ID to retrieve the long series data for.
+    #' @param n_months Number of months of data to retrieve.
+    #' @param by_time Time interval for data extraction.
+    #' @param n Maximum number of data points per request.
+    #' @param interval Time interval for OHLC data ("MINUTE", "HOUR", "DAY").
+    #' @param span Span of the interval.
+    #' @return A data.table containing the long series data.
+    get_long_series = function(market_id, n_months = 6, by_time = '15 mins', n = 3900, interval = "MINUTE", span = 15) {
+      result <- extractEveryNth(n_months = n_months, by_time = by_time, n = n)
+      cat("Getting", n_months, "months of data...\n")
+      long_series <- lapply(result, function(x) {
+        apiHist <- self$get_ohlc(market_id = market_id, num_ticks = n, interval = interval, span = span, from_ts = as.integer(x[1]), to_ts = as.integer(x[2]))
+        setDT(apiHist)
+        apiHist <- apiHist[, .(BarDate, Close)]
+      })
+      long_series <- rbindlist(long_series)
+      long_series <- long_series[!duplicated(BarDate)]
+      return(long_series)
     }
   )
 )
-
-
 
 
 

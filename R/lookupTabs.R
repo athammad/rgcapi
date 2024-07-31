@@ -1,27 +1,14 @@
-#Look up Tables and Functions
+#Look up Tables
 
-get_instruction_status_description <- function(status_code) {
-  return(instruction_status_descriptions[[as.character(status_code)]])
-}
-
-get_instruction_status_reason_description <- function(reason_code) {
-  return(instruction_status_reason_descriptions[[as.character(reason_code)]])
-}
-#-------------------------
-get_order_status_descriptions <- function(status_code) {
-  return(order_status_descriptions[[as.character(status_code)]])
-}
-
-get_order_status_reason_descriptions <- function(reason_code) {
-  return(order_status_reason_descriptions[[as.character(reason_code)]])
-}
-
-#---------------------------
-get_order_action_type_descriptions <- function(status_code) {
-  return(order_action_type_descriptions[[as.character(status_code)]])
-}
-
-
+#' Order Status Descriptions
+#'
+#' A lookup table for order status codes and their corresponding descriptions.
+#'
+#' @format A named list with order status codes as keys and descriptions as values.
+#' @examples
+#' \dontrun{
+#' order_status_descriptions[["1"]]
+#' }
 # Order Status Descriptions
 order_status_descriptions <- list(
   `1` = "Pending",
@@ -35,6 +22,16 @@ order_status_descriptions <- list(
   `10` = "Red Card",
   `11` = "Triggered"
 )
+
+#' Order Status Reason Descriptions
+#'
+#' A lookup table for order status reason codes and their corresponding descriptions.
+#'
+#' @format A named list with order status reason codes as keys and descriptions as values.
+#' @examples
+#' \dontrun{
+#' order_status_reason_descriptions[["1"]]
+#' }
 
 # Order Status Reason Descriptions
 order_status_reason_descriptions <- list(
@@ -358,7 +355,15 @@ order_status_reason_descriptions <- list(
   `1122` = "Market is Short Only"
 )
 
-###################################################################
+#' Instruction Status Descriptions
+#'
+#' A lookup table for instruction status codes and their corresponding descriptions.
+#'
+#' @format A named list with instruction status codes as keys and descriptions as values.
+#' @examples
+#' \dontrun{
+#' instruction_status_descriptions[["1"]]
+#' }
 # Instruction Status Descriptions
 instruction_status_descriptions <- list(
   `1` = "Accepted",
@@ -368,6 +373,15 @@ instruction_status_descriptions <- list(
   `5` = "Pending"
 )
 
+#' Instruction Status Reason Descriptions
+#'
+#' A lookup table for instruction status reason codes and their corresponding descriptions.
+#'
+#' @format A named list with instruction status reason codes as keys and descriptions as values.
+#' @examples
+#' \dontrun{
+#' instruction_status_reason_descriptions[["1"]]
+#' }
 # Instruction Status Reason Descriptions
 instruction_status_reason_descriptions <- list(
   `1` = "OK",
@@ -542,6 +556,16 @@ instruction_status_reason_descriptions <- list(
   `1099` = "Margin Rules cannot be retrieved"
 )
 
+#' Order Action Type Descriptions
+#'
+#' A lookup table for Order action type codes and their corresponding descriptions.
+#'
+#' @format A named list with Order action type codes as keys and descriptions as values.
+#' @examples
+#' \dontrun{
+#' order_action_type_descriptions[["1"]]
+#' }
+#'
 # Order Action Type Descriptions
 order_action_type_descriptions <- list(
   `1` = "Opening Order",

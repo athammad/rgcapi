@@ -1,11 +1,24 @@
 Package: rgcapi
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Interface to Gain Capital API V1 and V2 for Trading on Forex.com
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Author: Ahmed T. Hammad
+Maintainer: Ahmed T. Hammad <ahmed.t.hammad@gmail.com>
+Description: This package provides an interface to the Gain Capital API V1, 
+    enabling users to perform various trading operations on Forex.com. The package includes 
+    functionalities for account management, market information retrieval, trading operations, 
+    and historical data extraction. It also includes helper functions and lookup tables 
+    to facilitate the interpretation of API responses.
+License: GPL-3
 Encoding: UTF-8
 LazyData: true
+Imports: 
+    R6,
+    RCurl,
+    jsonlite,
+    lubridate,
+    data.table,
+    keyring
+Depends: 
+    R (>= 3.5.0)
+RoxygenNote: 7.3.1
