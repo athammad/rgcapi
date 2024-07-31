@@ -4,7 +4,7 @@ Title: Interface to Gain Capital API V1 and V2 for Trading on Forex.com
 Version: 0.1.0
 Author: Ahmed T. Hammad
 Maintainer: Ahmed T. Hammad <ahmed.t.hammad@gmail.com>
-Description: This package provides an interface to the Gain Capital API V1, 
+Description: This package provides an interface to the Gain Capital API V1 and V2, 
     enabling users to perform various trading operations on Forex.com. The package includes 
     functionalities for account management, market information retrieval, trading operations, 
     and historical data extraction. It also includes helper functions and lookup tables 
