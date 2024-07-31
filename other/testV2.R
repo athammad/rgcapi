@@ -2,9 +2,6 @@
 source("./R/GCapiClientv2.R")
 ################################################################################
 
-IDLOG <- "ahmed.t.hammad@gmail.comhsec"
-PSWD <- "Trade123@"
-APKEY <- "Ah.Hammad"
 
 client <- GCapiClientV2$new(username = keyring::key_get(service = "fx_sytem", username = "IDLOG"),
                           password = keyring::key_get(service = "fx_sytem", username = "PSWD"),
