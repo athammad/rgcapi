@@ -100,7 +100,7 @@ close_resp <- client$trade_order(
 
 
 # Get trade history
-trade_history <- client$get_trade_history(from = Sys.time()-days(2))
+trade_history <- client$get_trade_history()
 
 ```
 
