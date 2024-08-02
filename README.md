@@ -1,7 +1,8 @@
 # rgcapi <img src="./logo_rgcapi.png" align="right" height="200"/>
 
-The `rgcapi` package provides an interface to the **Gain Capital API** V1 and V2, enabling users to perform various trading operations on [Forex.com](forex.com). This package includes functionalities for account management, market information retrieval, trading operations, and historical data extraction. It also includes helper functions and lookup tables to facilitate the interpretation of API responses.
-The library is implemented using `R6`, an encapsulated object-oriented programming paradigm in R, which offers advantages such as modularity, reusability, and the ability to maintain state across function calls.
+The [rgcapi](https://github.com/athammad/rgcapi) R package provides an interface to the **Gain Capital API** V1 and V2, enabling users to perform various trading operations on [Forex.com](https://forex.com). This package includes functionalities for account management, market information retrieval, trading operations, and historical data extraction. It also includes helper functions and lookup tables to facilitate the interpretation of API responses. The library is implemented using `R6`, an encapsulated object-oriented programming paradigm in R, which offers advantages such as modularity, reusability, and the ability to maintain state across function calls.
+
+Notably, the [rgcapi](https://github.com/athammad/rgcapi) package is the only library within the R ecosystem that facilitates connectivity with the Gain Capital API. This makes it an indispensable tool for the automated management of trading accounts and the implementation of automated trading strategies. By leveraging the extensive statistical, data science, and machine learning capabilities of the R ecosystem, [rgcapi](https://github.com/athammad/rgcapi) offers a robust solution for traders and data scientists seeking to enhance their trading operations.
 
 ## Features
 
