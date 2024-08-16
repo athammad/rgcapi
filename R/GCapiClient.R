@@ -12,7 +12,7 @@ pkgload::load_code(path = "./R/helpers.R")
 #' GCapiClient
 #'
 #' This R6 class provides methods to interact with the Gain Capital API V1 for trading on Forex.com.
-#'
+#' @export
 #' @docType class
 #' @format An \code{\link{R6Class}} generator object
 #' @field rest_url The base URL for the Gain Capital API.

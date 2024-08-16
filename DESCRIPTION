@@ -31,3 +31,8 @@ Suggests:
     testthat (>= 3.0.0)    
 RoxygenNote: 7.3.1
 Language: en-US
+Collate: 
+    'helpers.R'
+    'lookupTabs.R'
+    'GCapiClient.R'
+    'GCapiClientv2.R'
