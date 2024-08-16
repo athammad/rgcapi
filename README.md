@@ -21,7 +21,7 @@ You can install this package directly from GitHub using `devtools`:
 install.packages("devtools")
 
 # Install rgcapi from GitHub
-devtools::install_github("yourusername/rgcapi")
+devtools::install_github("athammad/rgcapi")
 ```
 
 ## API Credentials

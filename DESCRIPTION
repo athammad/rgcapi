@@ -2,13 +2,17 @@ Package: rgcapi
 Type: Package
 Title: Interface to Gain Capital API V1 and V2 for Trading on Forex.com
 Version: 0.1.0
-Author: Ahmed T. Hammad
+Authors@R: 
+    person("Ahmed T.", "Hammad", , "ahmed.t.hammad@gmail.com", role = c("aut", "cre","cph"),
+           comment = c(ORCID = "0000-0003-3327-2435"))
 Maintainer: Ahmed T. Hammad <ahmed.t.hammad@gmail.com>
 Description: This package provides an interface to the Gain Capital API V1 and V2, 
     enabling users to perform various trading operations on Forex.com. The package includes 
     functionalities for account management, market information retrieval, trading operations, 
     and historical data extraction. It also includes helper functions and lookup tables 
     to facilitate the interpretation of API responses.
+URL: https://github.com/athammad/rgcapi
+BugReports: https://github.com/athammad/rgcapi/issues
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
@@ -16,9 +20,14 @@ Imports:
     R6,
     RCurl,
     jsonlite,
-    lubridate,
     data.table,
-    keyring
+    pkgload
 Depends: 
     R (>= 3.5.0)
+Suggests: 
+    knitr,
+    lubridate,
+    keyring,
+    testthat (>= 3.0.0)    
 RoxygenNote: 7.3.1
+Language: en-US

@@ -1,7 +1,6 @@
 library(R6)
 library(RCurl)
 library(jsonlite)
-library(lubridate)
 library(data.table)
 
 
@@ -21,12 +20,28 @@ pkgload::load_code(path = "./R/helpers.R")
 #' @field username The username for the current session.
 #' @field session The CURL handle for the current session.
 #' @field trading_account_id The trading account ID for the current session.
+#'
+#' @importFrom R6 R6Class
+#' @importFrom RCurl getCurlHandle
+#' @importFrom RCurl postForm
+#' @importFrom RCurl getURL
+#' @importFrom jsonlite toJSON
+#' @importFrom jsonlite fromJSON
+#' @importFrom data.table setDT
+#' @importFrom data.table as.data.table shift
+#' @importFrom stats na.omit
+#' @importFrom pkgload load_code
+#'
 #' @examples
 #' \dontrun{
 #' gc_client <- GCapiClient$new("your_username", "your_password", "your_appkey")
 #' account_info <- gc_client$get_account_info()
 #' market_info <- gc_client$get_market_info("EUR/USD")
 #' }
+#'
+
+
+
 GCapiClient <- R6Class(
   "GCapiClient",
   public = list(

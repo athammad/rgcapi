@@ -1,14 +1,44 @@
 library(R6)
 library(RCurl)
 library(jsonlite)
-library(lubridate)
 library(data.table)
-
 
 pkgload::load_code(path = "./R/lookupTabs.R")
 pkgload::load_code(path = "./R/helpers.R")
-# source("./R/lookupTabs.R")
-# source("./R/helpers.R")
+
+#' GCapiClientV2
+#'
+#' This R6 class provides methods to interact with the Gain Capital API V2 for trading on Forex.com.
+#'
+#' @docType class
+#' @format An \code{\link{R6Class}} generator object
+#' @field rest_url_v1 The base URL for the Gain Capital API V1.
+#' @field rest_url_v2 The base URL for the Gain Capital API V2.
+#' @field session_id The session ID for the current session.
+#' @field username The username for the current session.
+#' @field session The CURL handle for the current session.
+#' @field trading_account_id The trading account ID for the current session.
+#' @field client_account_id The user client account ID.
+#'
+#' @importFrom R6 R6Class
+#' @importFrom RCurl getCurlHandle
+#' @importFrom RCurl postForm
+#' @importFrom RCurl getURL
+#' @importFrom jsonlite toJSON
+#' @importFrom jsonlite fromJSON
+#' @importFrom data.table setDT
+#' @importFrom data.table as.data.table shift
+#' @importFrom stats na.omit
+#' @importFrom pkgload load_code
+#'
+#' @examples
+#' \dontrun{
+#' gc_client <- GCapiClientV2$new("your_username", "your_password", "your_appkey")
+#' account_info <- gc_client$get_account_info()
+#' market_info <- gc_client$get_market_info("EUR/USD")
+#' }
+#'
+#'
 
 GCapiClientV2 <- R6Class(
   "GCapiClientV2",

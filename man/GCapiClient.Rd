@@ -21,6 +21,7 @@ gc_client <- GCapiClient$new("your_username", "your_password", "your_appkey")
 account_info <- gc_client$get_account_info()
 market_info <- gc_client$get_market_info("EUR/USD")
 }
+
 }
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
