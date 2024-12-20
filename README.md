@@ -113,7 +113,7 @@ To report bugs/issues/feature requests, please file an [issue](https://github.co
 ## Author
 `rgcapi` is written by [Ahmed T. Hammad](https://athsas.com/) and is under active development. Please feel free to contribute by submitting any issues or requests—or by solving any current issues!
 
-## R version
+## Python version
 If you prefer `Python`, you can use the [pygcapi library](https://github.com/athammad/pygcapi/).
 
 ## Disclaimer
